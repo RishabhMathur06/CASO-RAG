@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>GraphRAG-X 🧠</h1>
+  <h1>CASO-RAG 🧠</h1>
   <p><b>Beyond Dumb Retrieval — A Self-Organizing, Context-Aware Hybrid Graph-Vector Retrieval Engine</b></p>
 
   <a href="https://github.com/RishabhMathur06/CASO-RAG/stargazers"><img src="https://img.shields.io/github/stars/RishabhMathur06/CASO-RAG" alt="Stars Badge"/></a>
@@ -11,17 +11,17 @@
 
 <br>
 
-GraphRAG-X is a production-grade, fully open-source Retrieval-Augmented Generation (RAG) system that fundamentally solves the "dumb search" problem plaguing standard Vector Database implementations. 
+CASO-RAG is a production-grade, fully open-source Retrieval-Augmented Generation (RAG) system that fundamentally solves the "dumb search" problem plaguing standard Vector Database implementations. 
 
-Instead of treating inserted documents as isolated embedding blobs, GraphRAG-X builds a **living Knowledge Graph** on top of vector storage during ingestion. At query time, it uses a multi-stage, custom-built retrieval pipeline that combines semantic search, sparse keyword search, graph traversal, and cross-encoder reranking to return highly relevant, contextually coherent, and citation-verified answers.
+Instead of treating inserted documents as isolated embedding blobs, CASO-RAG builds a **living Knowledge Graph** on top of vector storage during ingestion. At query time, it uses a multi-stage, custom-built retrieval pipeline that combines semantic search, sparse keyword search, graph traversal, and cross-encoder reranking to return highly relevant, contextually coherent, and citation-verified answers.
 
-Designed for privacy and full control, GraphRAG-X runs **entirely locally with zero paid API dependencies**, using open-source LLMs loaded from HuggingFace, self-hosted databases, and custom algorithms.
+Designed for privacy and full control, CASO-RAG runs **entirely locally with zero paid API dependencies**, using open-source LLMs loaded from HuggingFace, self-hosted databases, and custom algorithms.
 
 ---
 
 ## 🌟 Key Differentiators
 
-| Feature | Standard RAG | **GraphRAG-X** |
+| Feature | Standard RAG | **CASO-RAG** |
 | :--- | :--- | :--- |
 | **Retrieval Method** | Dense vector ANN only | Dense + Sparse (BM25) + Graph Traversal + Reranking |
 | **Document Organization** | None (flat blob storage) | Auto-organized Knowledge Graph |
@@ -37,7 +37,7 @@ Designed for privacy and full control, GraphRAG-X runs **entirely locally with z
 
 ## 🏗️ Architecture
 
-GraphRAG-X employs a modular, microservices-based architecture orchestrated via Docker:
+CASO-RAG employs a modular, microservices-based architecture orchestrated via Docker:
 
 - **Frontend**: React 19, TypeScript, TailwindCSS 4, Zustand, Vite.
 - **Backend**: FastAPI (Python 3.11+), AsyncIO, Pydantic v2.
@@ -54,7 +54,7 @@ GraphRAG-X employs a modular, microservices-based architecture orchestrated via 
 
 ## 🚀 Quick Start (Docker)
 
-The easiest way to get GraphRAG-X running is via our Docker Compose setup, which automatically provisions the backend, frontend, databases, and MLflow/LangFuse observability stack.
+The easiest way to get CASO-RAG running is via our Docker Compose setup, which automatically provisions the backend, frontend, databases, and MLflow/LangFuse observability stack.
 
 ### Prerequisites
 - Docker & Docker Compose plugin
@@ -92,7 +92,7 @@ The easiest way to get GraphRAG-X running is via our Docker Compose setup, which
 ## 🛠️ Usage Pipeline
 
 ### 1. Smart Ingestion
-Upload documents (PDF, MD, TXT). GraphRAG-X will:
+Upload documents (PDF, MD, TXT). CASO-RAG will:
 1. Scrub PII using Microsoft Presidio.
 2. Filter out toxic content.
 3. Semantically chunk the document.
@@ -114,7 +114,7 @@ When a user submits a query:
 ## 📂 Project Structure
 
 ```text
-graphrag-x/
+CASO-RAG/
 ├── backend/            # FastAPI, Core Intelligence Layer, Retrieval, LLMOps
 ├── frontend/           # React 19 UI, Interactive Graph Visualizer, Dashboards
 ├── infrastructure/     # Nginx, Prometheus, Grafana configs
