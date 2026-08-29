@@ -1,0 +1,122 @@
+version: '3.8'
+
+services:
+  # 1. Vector Database
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: caso_qdrant
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/readyz"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # 2. Graph Database
+  neo4j:
+    image: neo4j:5-community
+    container_name: caso_neo4j
+    ports:
+      - "7474:7474"  # Neo4j Browser UI
+      - "7687:7687"  # Bolt protocol
+    environment:
+      - NEO4J_AUTH=neo4j/casorag_neo4j_password
+      - NEO4J_PLUGINS=["apoc"]
+    volumes:
+      - neo4j_data:/data
+    healthcheck:
+      test: ["CMD", "wget", "http://localhost:7474", "-O", "-"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
+  # 3. Relational Database (Metadata & Logs)
+  postgres:
+    image: postgres:16-alpine
+    container_name: caso_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=caso_db
+      - POSTGRES_USER=caso_user
+      - POSTGRES_PASSWORD=casorag_postgres_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U caso_user -d caso_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 4. Redis Cache & Job State
+  redis:
+    image: redis:7-alpine
+    container_name: caso_redis
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass casorag_redis_password
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "casorag_redis_password", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # 5. MLflow (Experiment Tracking)
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:latest
+    container_name: caso_mlflow
+    ports:
+      - "5000:5000"
+    command: >
+      mlflow server
+      --host 0.0.0.0
+      --backend-store-uri sqlite:///mlflow.db
+      --default-artifact-root /mlflow/artifacts
+    volumes:
+      - mlflow_data:/mlflow
+
+  # 6. Langfuse (LLM Observability)
+  langfuse:
+    image: ghcr.io/langfuse/langfuse:latest
+    container_name: caso_langfuse
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://caso_user:casorag_postgres_password@postgres:5432/caso_db
+      - NEXTAUTH_URL=http://localhost:3000
+      - NEXTAUTH_SECRET=casorag_secret_123
+      - SALT=casorag_salt_123
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # 7. Prometheus (Metrics Scraper)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: caso_prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./infrastructure/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  # 8. Grafana (Dashboards)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: caso_grafana
+    ports:
+      - "3001:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+
+volumes:
+  qdrant_data:
+  neo4j_data:
+  postgres_data:
+  redis_data:
+  mlflow_data:
+  grafana_data:
