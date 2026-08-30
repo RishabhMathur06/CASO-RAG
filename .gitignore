@@ -1,2 +1,8 @@
 # Project Documents
 docs/
+
+# Environment Variables
+.env
+
+# Virtual Environments
+.venv
