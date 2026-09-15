@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'graphrag_backend'
+    static_configs: # This tells Prometheus to look for our FastAPI server running on our Mac
+      - targets: ['host.docker.internal:8000']
