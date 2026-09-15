@@ -60,8 +60,8 @@ class Settings(BaseSettings):
 
     # Tells pydantic to read from the .env file located one level-up from backend folder.
     model_config = SettingsConfigDict(
-        env_file=".env",
-        env_file_encodding="utf-8",
+        env_file="../.env",
+        env_file_encoding="utf-8",
         extra="ignore"
     )
 
