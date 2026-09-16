@@ -8,3 +8,17 @@ docs/
 .venv
 
 __pycache__
+
+# MacOs Junk files
+.DS_Store
+
+# Downloaded AI models
+data/models/
+
+# MLflow database and artifacts (local metrics)
+mlflow.db
+mlflow/artifacts/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
