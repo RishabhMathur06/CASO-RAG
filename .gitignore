@@ -13,7 +13,7 @@ __pycache__
 .DS_Store
 
 # Downloaded AI models
-data/models/
+backend/data/models/
 
 # MLflow database and artifacts (local metrics)
 mlflow.db
