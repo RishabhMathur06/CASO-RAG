@@ -25,7 +25,10 @@ class OllamaClient:
             try:
                 response = await client.post(self.generate_endpoint, json=payload)
                 response.raise_for_status()
-            
+
+                result = response.json()
+                return result.get("response", "")
+                
             except httpx.HTTPError as e:
                 print(f"Error communicating with Ollama: {e}")
                 return "Error: Could not generate response from Ollama."
