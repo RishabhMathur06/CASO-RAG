@@ -6,7 +6,7 @@
 ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![Neo4j](https://img.shields.io/badge/Neo4j-018bff?style=for-the-badge&logo=neo4j&logoColor=white)
-![Llama 3](https://img.shields.io/badge/Llama_3-0466C8?style=for-the-badge)
+![Ollama](https://img.shields.io/badge/Ollama-FFFFFF?style=for-the-badge&logo=ollama&logoColor=black)
 ![Qdrant](https://img.shields.io/badge/Qdrant-Vector_DB-FF5252?style=for-the-badge)
 
 ---
@@ -26,7 +26,7 @@ Instead of treating inserted documents as isolated blobs, CASO-RAG builds a **li
 | **Retrieval Method** | Dense vector ANN only | Dense + Sparse (BM25) + Graph Traversal + Reranking |
 | **Document Organization** | None (flat blob storage) | Auto-organized Knowledge Graph (Neo4j) |
 | **Context Awareness** | Chunk-level only | Multi-hop graph-aware context |
-| **Execution** | Cloud APIs | 100% Local / Apple Silicon Optimized (.gguf) |
+| **Execution** | Cloud APIs | 100% Local / Apple Silicon Optimized (Ollama) |
 
 ---
 
