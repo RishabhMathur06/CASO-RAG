@@ -56,7 +56,7 @@ class IngestionPipeline:
         # Simple graph query: creates document node and chunk node, then connects them.
         query = """
         MERGE (d: Document {id: $doc_id, title: $title})
-        CREATE (c: Chunk {id: $chunk_id, text: $text, index: #chunk_index})
+        CREATE (c: Chunk {id: $chunk_id, text: $text, index: $chunk_index})
         CREATE (d)-[:HAS_CHUNK]->(c)
         """
         with self.neo4j.driver.session() as session:
