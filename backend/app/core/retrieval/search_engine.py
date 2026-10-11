@@ -28,9 +28,9 @@ class HybridSearchEngine:
         )
 
         # Extract the unique IDs of the chunks Qdrant found.
-        chunks_ids = [hit.id for hit in qdrant_results]
+        chunk_ids = [hit.id for hit in qdrant_results]
 
-        if not chunks_ids:
+        if not chunk_ids:
             return "No relevant context found in databases."
 
         # 3. Ask Neo4j to pull those exact chunks AND their relationships
@@ -43,7 +43,7 @@ class HybridSearchEngine:
 
         context_blocks = []
         with self.neo4j.driver.session() as session:
-            results = session.run(graph_query, chunks_ids=chunks_ids)
+            results = session.run(graph_query, chunk_ids=chunk_ids)
 
             for record in results:
                 # We format the context beautifully for the LLM.
