@@ -21,14 +21,14 @@ class HybridSearchEngine:
         dense_vec, _ = self.embedder.embed_text(query)
 
         # 2. Asks Qdrant to find the mathematically closest chunks.
-        qdrant_results = self.qdrant.client.search(
+        qdrant_results = self.qdrant.client.query_points(
             collection_name = self.qdrant.collection_name,
-            query_vector = dense_vec,
+            query = dense_vec,
             limit = top_k
         )
 
         # Extract the unique IDs of the chunks Qdrant found.
-        chunk_ids = [hit.id for hit in qdrant_results]
+        chunk_ids = [point.id for point in qdrant_results.points]
 
         if not chunk_ids:
             return "No relevant context found in databases."
