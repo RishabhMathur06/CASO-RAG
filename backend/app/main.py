@@ -9,8 +9,7 @@ from app.db.qdrant_client import init_qdrant
 from app.db.neo4j_client import neo4j_db
 from app.db.redis_client import check_redis_connection
 
-from app.api.routes import health
-
+from app.api.routes import health, rag
 settings = get_settings()
 
 @asynccontextmanager
@@ -61,8 +60,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Plugs the health router into main app and automaticlaly adds /api/v1 to the URL.
+# Plugs routers into main app under /api/v1 prefix.
 app.include_router(health.router, prefix="/api/v1")
+app.include_router(rag.router, prefix="/api/v1")
 
 # Simple root endpoint just to test if the server is awake.
 @app.get("/")
