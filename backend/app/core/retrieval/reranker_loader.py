@@ -30,12 +30,12 @@ class RerankerLoader:
             return []
 
         # Prepare sentence pairs for cross-attention scoring : [query, document_text].
-        sentence_pairs = [[query, candidate["text"]] for candiate in candidates]
+        sentence_pairs = [[query, candidate["text"]] for candidate in candidates]
 
         logger.debug(f"Computing cross-encoder scores for {len(sentence_pairs)} candidates against query: '{query[:50]}...'")
 
         # normalize=True applies sigmoid to map raw logits to [0.0, 1.0] probabilities.
-        scores = self.reranker.compute_scores(sentence_pairs, normalize=True)
+        scores = self.reranker.compute_score(sentence_pairs, normalize=True)
 
         # In case a single candidate was passed, ensure scores is a list.
         if isinstance(scores, float):
