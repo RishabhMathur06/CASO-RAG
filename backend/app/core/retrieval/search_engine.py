@@ -14,11 +14,11 @@ class HybridSearchEngine:
         self.embedder = embedding_loader
         self.reranker = reranker_loader
 
-    def search(self, query: str, top_k: int = 3):
+    def search(self, query: str, top_k: int = 3, min_score: float = 0.20) -> str:
         """
         The 2-stage Hybrid GraphRAG Engine:
         1. STAGE-1 (Recall): Vector search in Qdrant + Graph traversal in Neo4j (fetch broad candidate pool).
-        2. STAGE-2 (Precision): Cross-encoder reranking via BGE-Reranker-v2-m3.
+        2. STAGE-2 (Precision): Cross-encoder reranking via BGE-Reranker-v2-m3 with score threshold filtering.
         """
         logger.info(f"Initiating Hybrid Search for query: '{query}'")
 
@@ -64,17 +64,28 @@ class HybridSearchEngine:
         logger.info(f"Stage 1 complete: Retrieved {len(candidates)} candidate chunks with Neo4j graph lineage.")
 
         # Stage 2: Cross-Encoder Reranking.
-        logger.info(f"Stage 2: Reranking candidates to pick top {top_k} highest-relevance chunks...")
+        logger.debug(f"Stage 2: Reranking candidates to pick top {top_k} highest-relevance chunks...")
         reranked_chunks = self.reranker.rerank(query=query, candidates=candidates, top_k=top_k)
+
+        # Filter out chunks that do not meet the minimum relevance threshold
+        filtered_chunks = [c for c in reranked_chunks if c["rerank_score"] >= min_score]
+
+        if not filtered_chunks and reranked_chunks:
+            logger.warning(f"No candidate met the threshold ({min_score}). Falling back to top 1 candidate.")
+            filtered_chunks = reranked_chunks[:1]
+
+        logger.info(f"Retained {len(filtered_chunks)} chunks meeting the relevance threshold (>= {min_score}).")
 
         # Build final formatted context string for LLM.
         context_blocks = []
-
-        for chunk in reranked_chunks:
+        for chunk in filtered_chunks:
             block = f"[Source: {chunk['title']} | Relevance Score: {chunk['rerank_score']:.4f}]\n{chunk['text']}"
-            context_blocks.append(block)    
+            context_blocks.append(block)
+
+        if not context_blocks:
+            return "No relevant context found in databases."
+
         final_context = "\n\n---\n\n".join(context_blocks)
-        
         return final_context
 
 # Instance creation
