@@ -82,6 +82,32 @@ docker compose up -d
 cd backend
 uv run uvicorn app.main:app --reload
 ```
+Once started, access the interactive Swagger API documentation at:
+👉 **`http://localhost:8000/docs`**
+
+**5. Verification & Testing:**
+```bash
+cd backend
+# 1. Test Cross-Encoder Reranker
+uv run python -m scripts.test_reranker
+
+# 2. Test Dual Ingestion (Qdrant + Neo4j)
+uv run python -m scripts.test_ingestion
+
+# 3. Test Hybrid Search Retrieval
+uv run python -m scripts.test_search
+
+# 4. Test End-to-End RAG Generation
+uv run python -m scripts.test_rag
+```
+
+## 📡 API Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/v1/health` | Service health status |
+| `POST` | `/api/v1/rag/query` | Submit natural language query and receive grounded answer with source citations |
+| `POST` | `/api/v1/rag/ingest` | Ingest raw documents into vector (Qdrant) and graph (Neo4j) databases |
 
 ## 📄 License
 This project is licensed under the MIT License.
