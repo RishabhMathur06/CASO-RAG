@@ -23,10 +23,35 @@ Instead of treating inserted documents as isolated blobs, CASO-RAG builds a **li
 ### Key Differentiators
 | Feature | Standard RAG | CASO-RAG |
 |---|---|---|
-| **Retrieval Method** | Dense vector ANN only | Dense + Sparse (BM25) + Graph Traversal + Reranking |
-| **Document Organization** | None (flat blob storage) | Auto-organized Knowledge Graph (Neo4j) |
-| **Context Awareness** | Chunk-level only | Multi-hop graph-aware context |
-| **Execution** | Cloud APIs | 100% Local / Apple Silicon Optimized (Ollama) |
+| **Retrieval Method** | Dense vector ANN only | **Two-Stage:** Dense + Sparse (BGE-M3) + Graph Traversal + Cross-Encoder Reranking (BGE-Reranker-v2-m3) |
+| **Noise Filtering** | Top-k chunks blindly passed to LLM | Dynamic relevance threshold filtering (`min_score >= 0.20`) |
+| **Document Organization** | None (flat blob storage) | Auto-organized Knowledge Graph (Neo4j) with parent-child chunk lineage |
+| **Context Awareness** | Chunk-level only | Multi-hop graph-aware context with verified source attribution |
+| **Observability** | Console print statements | Structured dual logging (Console + Rotating files in `logs/` via Loguru) |
+| **Execution** | Cloud APIs (paid, third-party data leakage) | 100% Local / Apple Silicon Optimized (Ollama / Qwen) |
+
+---
+
+## ⚡ Two-Stage Retrieval & Reranking Architecture
+
+```text
+User Query: "Where was Steve Jobs born and what did Apple sell in 1976?"
+                                │
+                                ▼
+        [Stage 1: High-Recall Candidate Retrieval]
+        • Qdrant fetches Top-10 vector candidates (Cosine similarity on BGE-M3 dense vectors)
+        • Neo4j traverses (d:Document)-[:HAS_CHUNK]->(c:Chunk) to pull text + provenance
+                                │
+                                ▼
+        [Stage 2: Cross-Encoder Precision Reranking]
+        • BGE-Reranker-v2-m3 computes joint cross-attention: (Query ⟷ Chunk)
+        • Scores each candidate from 0.0 to 1.0
+        • Threshold filter drops noise (retains chunks >= 0.20)
+                                │
+                                ▼
+        [Top Context Blocks with Citations]
+        • Clean, high-precision context passed to Qwen via Ollama
+```
 
 ---
 
