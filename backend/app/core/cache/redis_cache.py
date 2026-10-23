@@ -88,7 +88,7 @@ class RedisQueryCache:
 
         except Exception as e:
             logger.error(f"Failed to clear Redis Cache: {e}")
-            retrun 0
+            return 0
 
 # Instance Creation
 redis_query_cache = RedisQueryCache()
