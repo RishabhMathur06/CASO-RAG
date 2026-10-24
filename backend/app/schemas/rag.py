@@ -9,6 +9,7 @@ class QueryResponse(BaseModel):
     query: str
     answer: str
     context: str
+    cached: bool = False
 
 class IngestRequest(BaseModel):
     title: str = Field(..., description="Document title", min_length=1)
