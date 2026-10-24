@@ -39,9 +39,9 @@ class RedisQueryCache:
 
                 return data
 
-                logger.debug(f"[CACHE MISS] No cached response found for query: '{query[:45]}...'")
+            logger.debug(f"[CACHE MISS] No cached response found for query: '{query[:45]}...'")
 
-                return None
+            return None
         except Exception as e:
             # Fail-Open: if Redis has an issue, log warning and let RAG run normally.
             logger.warning(f"Redis cache read error (falling back to live query): {e}")
