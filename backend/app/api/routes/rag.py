@@ -4,6 +4,8 @@ from app.schemas.rag import QueryRequest, QueryResponse, IngestRequest, IngestRe
 from app.core.generation.rag_pipeline import rag_pipeline
 from app.core.ingestion.pipeline import ingestion_pipeline
 from app.core.cache.redis_cache import redis_query_cache
+import time
+from app.llmops.metrics import RAG_QUERIES_TOTAL, RAG_QUERY_DURATION_SECONDS, RAG_DOCS_INGESTED_TOTAL
 
 router = APIRouter(prefix="/rag", tags=["RAG Engine"])
 
@@ -17,11 +19,19 @@ async def query_rag(request: QueryRequest):
     4. Grounded answer generation via Ollama (Qwen)
     """
     try:
+        start_time = time.perf_counter()
         result = await rag_pipeline.answer_query(query=request.query, top_k=request.top_k)
+        duration = time.perf_counter() - start_time
+
+        # Track query latency and counts metrics.
+        is_cached = str(result.get("cached", False)).lower()
+        RAG_QUERIES_TOTAL.labels(status="success", cached=is_cached).inc()
+        RAG_QUERY_DURATION_SECONDS.labels(cached=is_cached).observe(duration)
 
         return QueryResponse(**result)
     
     except Exception as e:
+        RAG_QUERIES_TOTAL.labels(status="error", cached="False").inc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error executing RAG query: {str(e)}"
@@ -35,6 +45,9 @@ async def ingest_document(request: IngestRequest):
     try:
         ingestion_pipeline.process_document(text=request.text, document_title=request.title)
 
+        # Track document ingestion.
+        RAG_DOCS_INGESTED_TOTAL.inc()
+        
         # Invalidate cache when a document is ingested.
         await redis_query_cache.clear_all()
 

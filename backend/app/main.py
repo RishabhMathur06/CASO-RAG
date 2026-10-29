@@ -10,6 +10,8 @@ from app.db.neo4j_client import neo4j_db
 from app.db.redis_client import check_redis_connection
 
 from app.api.routes import health, rag
+from app.llmops.metrics import get_metrics_response
+
 settings = get_settings()
 
 @asynccontextmanager
@@ -63,6 +65,11 @@ app.add_middleware(
 # Plugs routers into main app under /api/v1 prefix.
 app.include_router(health.router, prefix="/api/v1")
 app.include_router(rag.router, prefix="/api/v1")
+
+@app.get("/metrics", tags=["Observability"])
+async def metrics():
+    """Prometheus metrics scrape endpoint."""
+    return get_metrics_response()
 
 # Simple root endpoint just to test if the server is awake.
 @app.get("/")
