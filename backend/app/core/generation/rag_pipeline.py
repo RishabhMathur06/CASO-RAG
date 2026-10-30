@@ -5,12 +5,16 @@ from app.core.generation.prompt_builder import PromptBuilder
 from app.core.generation.llm_loader import ollama_client
 from app.core.cache.redis_cache import redis_query_cache
 
+import time
+from app.llmops.tracer import langfuse_tracer
+
 class RAGPipeline:
     def __init__(self):
         self.search_engine = search_engine
         self.prompt_builder = PromptBuilder()
         self.llm = ollama_client
         self.cache = redis_query_cache
+        self.tracer = langfuse_tracer
 
     async def answer_query(self, query: str, top_k: int = 3) -> dict:
         """
@@ -20,9 +24,19 @@ class RAGPipeline:
         3. Builds an augmented prompt with strict anti-hallucination instructions and generates a grounded answer via local Ollama.
         4. Saves response into Redis cache for future queries.
         """
+        start_time = time.perf_counter()
+
         # 1. Check Redis cache first.
         cached_result = await self.cache.get(query=query, top_k=top_k)
         if cached_result:
+            self.tracer.log_rag_trace(
+                query=query,
+                answer=cached_result["answer"],
+                context=cached_result["context"],
+                latency_seconds=time.perf_counter() - start_time,
+                cached=True
+            )
+
             return cached_result
 
         # 2. Cache miss: retrieve hybrid context from databases.
@@ -44,6 +58,14 @@ class RAGPipeline:
         
         # 5. Store in Redis cache for future calls.
         await self.cache.set(query=query, top_k=top_k, data=result)
+
+        self.tracer.log_rag_trace(
+            query=query,
+            answer=answer,
+            context=context,
+            latency_seconds=time.perf_counter() - start_time,
+            cached=False
+        )
 
         return result
 
