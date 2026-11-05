@@ -35,3 +35,6 @@ def run_guardrails_test():
     logger.info(f"Is Safe: {res3['is_safe']} | Query: '{res3['sanitized_query']}'")
     assert res3["is_safe"] is True, "Legitimate queries must pass cleanly!"
     logger.success("\nAll Responsible AI Guardrail tests passed successfully!")
+
+if __name__ == "__main__":
+    run_guardrails_test()

@@ -35,7 +35,7 @@ class ResponsibleAIGuard:
 
     def __init__(self):
         self.injection_regexes = [re.compile(p, re.IGNORECASE) for p in self.INJECTION_PATTERNS]
-        self.pii_regexes = {labels: re.compile(p) for label, p in self.PII_PATTERNS.items()}
+        self.pii_regexes = {label: re.compile(p) for label, p in self.PII_PATTERNS.items()}
 
     def detect_prompt_injection(self, text: str) -> Tuple[bool, List[str]]:
         """
