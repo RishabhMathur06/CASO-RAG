@@ -11,6 +11,7 @@ from app.db.redis_client import check_redis_connection
 
 from app.api.routes import health, rag
 from app.llmops.metrics import get_metrics_response
+from app.api.middleware.request_logger import RequestAuditMiddleware
 
 settings = get_settings()
 
@@ -61,6 +62,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Register middleware.
+app.add_middleware(RequestAuditMiddleware)
 
 # Plugs routers into main app under /api/v1 prefix.
 app.include_router(health.router, prefix="/api/v1")

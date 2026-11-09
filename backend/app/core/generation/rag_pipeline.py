@@ -4,6 +4,7 @@ from app.core.retrieval.search_engine import search_engine
 from app.core.generation.prompt_builder import PromptBuilder
 from app.core.generation.llm_loader import ollama_client
 from app.core.cache.redis_cache import redis_query_cache
+from app.responsible_ai.guardrails import guardrails
 
 import time
 from app.llmops.tracer import langfuse_tracer
@@ -15,6 +16,7 @@ class RAGPipeline:
         self.llm = ollama_client
         self.cache = redis_query_cache
         self.tracer = langfuse_tracer
+        self.guardrails = guardrails
 
     async def answer_query(self, query: str, top_k: int = 3) -> dict:
         """
@@ -25,6 +27,18 @@ class RAGPipeline:
         4. Saves response into Redis cache for future queries.
         """
         start_time = time.perf_counter()
+
+        safety_check = self.guardrails.validate_and_sanitize(query)
+        if not safety_check["is_safe"]:
+            logger.warning(f"Query blocked by Responsible AI: {safety_check['rejection_reason']}")
+
+            return {
+                "query": query,
+                "answer": safety_check["rejection_reason"],
+                "context": "N/A - Query blocked by security guardrails.",
+                "cached": False
+            }
+        query = safety_check["sanitized_query"]
 
         # 1. Check Redis cache first.
         cached_result = await self.cache.get(query=query, top_k=top_k)
