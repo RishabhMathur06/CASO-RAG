@@ -1,0 +1,84 @@
+{
+  "metadata": {
+    "name": "CASO-RAG Evaluation Benchmark Dataset",
+    "version": "1.0.0",
+    "description": "Standardized evaluation dataset containing true knowledge sources, distractor corpus, and benchmark questions for measuring Hit@1, Recall@3, and Distractor Noise Rejection Rate.",
+    "metrics_evaluated": [
+      "Hit@1",
+      "Recall@3",
+      "Mean Reciprocal Rank (MRR)",
+      "Distractor Noise Rejection Rate"
+    ]
+  },
+  "corpus": [
+    {
+      "id": "doc_01",
+      "title": "Biography of Steve Jobs",
+      "is_distractor": false,
+      "text": "Steve Jobs was an American entrepreneur and inventor best known as the co-founder of Apple Inc. He was born in San Francisco, California. Apple was founded in 1976 to sell Wozniak's Apple I personal computer."
+    },
+    {
+      "id": "doc_02",
+      "title": "California Apple Orchard Report 1976",
+      "is_distractor": true,
+      "text": "In 1976, apple orchards across Northern California and San Francisco reported record harvests of red delicious apples sold in local markets and farm stands."
+    },
+    {
+      "id": "doc_03",
+      "title": "Steve Wozniak Engineering Notes",
+      "is_distractor": false,
+      "text": "The Apple I personal computer was designed and hand-built by Steve Wozniak. It utilized the MOS Technology 6502 microprocessor running at 1 MHz with 4 KB of standard RAM."
+    },
+    {
+      "id": "doc_04",
+      "title": "History of Python",
+      "is_distractor": false,
+      "text": "Python is a high-level programming language conceived in the late 1980s by Guido van Rossum at CWI in the Netherlands. It was officially released in 1991."
+    },
+    {
+      "id": "doc_05",
+      "title": "Monty Python British Comedy",
+      "is_distractor": true,
+      "text": "Monty Python was a British surreal comedy troupe formed in 1969. Their sketch show aired on the BBC and influenced modern comedy across Europe and the Netherlands."
+    },
+    {
+      "id": "doc_06",
+      "title": "Neo4j Graph Architecture",
+      "is_distractor": false,
+      "text": "Neo4j is a native graph database that stores data as nodes and relationships rather than tables. It uses the declarative Cypher query language for multi-hop graph traversals."
+    },
+    {
+      "id": "doc_07",
+      "title": "Qdrant Vector Engine",
+      "is_distractor": false,
+      "text": "Qdrant is a high-performance vector similarity search engine written in Rust. It uses Hierarchical Navigable Small World (HNSW) indexes and cosine distance for fast nearest-neighbor retrieval."
+    }
+  ],
+  "eval_queries": [
+    {
+      "id": "query_01",
+      "query": "In 1976 in San Francisco, what product was Apple founded to sell?",
+      "expected_title": "Biography of Steve Jobs"
+    },
+    {
+      "id": "query_02",
+      "query": "Which microprocessor and how much RAM did the Apple I computer use?",
+      "expected_title": "Steve Wozniak Engineering Notes"
+    },
+    {
+      "id": "query_03",
+      "query": "Who conceived the Python language in the Netherlands and when was it released?",
+      "expected_title": "History of Python"
+    },
+    {
+      "id": "query_04",
+      "query": "What query language is used to traverse nodes and relationships in a graph database?",
+      "expected_title": "Neo4j Graph Architecture"
+    },
+    {
+      "id": "query_05",
+      "query": "Which Rust-based engine uses HNSW indexes for nearest-neighbor vector search?",
+      "expected_title": "Qdrant Vector Engine"
+    }
+  ]
+}
