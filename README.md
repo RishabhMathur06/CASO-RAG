@@ -1,4 +1,4 @@
-# 🧠 CASO-RAG (GraphRAG-X)
+# CASO-RAG (GraphRAG-X)
 > *Beyond Dumb Retrieval — A Self-Organizing, Context-Aware Hybrid Graph-Vector Retrieval Engine*
 
 ![Open Source](https://img.shields.io/badge/Open%20Source-%E2%9D%A4-red?style=for-the-badge)
@@ -15,13 +15,13 @@
 
 ---
 
-## 🛑 The Problem: Why Standard Vector Databases Are "Dumb"
+## The Problem: Why Standard Vector Databases Are "Dumb"
 Standard RAG pipelines today suffer from critical failures:
 1. **Context Loss:** Documents are split into arbitrary chunks. The database has zero knowledge that Chunk B is the logical continuation of Chunk A.
 2. **Similarity ≠ Relevance:** Standard search finds vectors that are mathematically close, but fails to capture logical relevance or thematic relationships.
 3. **No Self-Organization:** Every document inserted is an isolated orphan. There is no automatic clustering by topic, entity, or relationship.
 
-## 🚀 The Solution: CASO-RAG
+## The Solution: CASO-RAG
 Instead of treating inserted documents as isolated blobs, CASO-RAG builds a **living Knowledge Graph** on top of vector storage during ingestion. At query time, it uses a multi-stage retrieval pipeline combining semantic search, sparse keyword search, graph traversal, and cross-encoder reranking to return highly relevant, citation-verified answers.
 
 ### Key Differentiators
@@ -62,7 +62,7 @@ User Query: "Where was Steve Jobs born and what did Apple sell in 1976?"
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
 
 ```text
 +--------------------------------------------------------------------------------+
@@ -87,7 +87,7 @@ User Query: "Where was Steve Jobs born and what did Apple sell in 1976?"
 
 ---
 
-## 🏛️ Core Architectural Components & Purpose
+## Core Architectural Components & Purpose
 
 CASO-RAG combines a specialized storage, latency, and observability stack. Here is the exact role each component plays:
 
@@ -101,7 +101,7 @@ CASO-RAG combines a specialized storage, latency, and observability stack. Here 
 
 ---
 
-### 2. 📊 Observability & LLMOps: Grafana & Prometheus
+### 2. Observability & LLMOps: Grafana & Prometheus
 * **Role:** Production Monitoring, Performance Dashboards & SRE Telemetry.
 * **Why it's needed:** Enterprise AI systems cannot operate as black boxes; engineers need real-time visibility into traffic volume, latency regressions, and cache effectiveness.
 * **How it works:**
@@ -113,7 +113,7 @@ CASO-RAG combines a specialized storage, latency, and observability stack. Here 
 
 ---
 
-### 3. 🧪 Quantitative Benchmarking: MLflow
+### 3. Quantitative Benchmarking: MLflow
 * **Role:** Evaluation Tracking, Regression Prevention & Metric Logging.
 * **Why it's needed:** To scientifically prove that CASO-RAG's two-stage hybrid retrieval outperforms traditional "naive" vector search.
 * **How it works:**
@@ -123,7 +123,7 @@ CASO-RAG combines a specialized storage, latency, and observability stack. Here 
 
 ---
 
-### 4. 🔍 Lifecycle Tracing: Langfuse
+### 4. Lifecycle Tracing: Langfuse
 * **Role:** Deep LLM Observability & Step-by-Step Execution Tracing.
 * **Why it's needed:** To inspect individual prompt constructions, retrieved context payloads, and local model generation steps.
 * **How it works:**
@@ -132,13 +132,13 @@ CASO-RAG combines a specialized storage, latency, and observability stack. Here 
 
 ---
 
-### 5. 🗄️ Dual-Store Knowledge Base: Qdrant + Neo4j
+### 5. Dual-Store Knowledge Base: Qdrant + Neo4j
 * **Qdrant Vector DB (`:6333`):** High-speed approximate nearest neighbor (ANN) search using HNSW indexing and cosine similarity over 1024-dimensional BGE-M3 dense embeddings.
 * **Neo4j Graph DB (`:7474`, `:7687`):** Native graph database that links `(Document)-[:HAS_CHUNK]->(Chunk)` nodes. Maintains structural chunk order, parent document metadata, and enables multi-hop relational context expansion.
 
 ---
 
-### 6. 🛡️ Responsible AI: Security Guardrails & Audit Middleware
+### 6. Responsible AI: Security Guardrails & Audit Middleware
 * **Prompt Injection Shield:** Evaluates incoming user prompts against known jailbreak/override signatures before processing.
 * **Automated PII Redaction:** Regex-based sanitization that masks emails (`[EMAIL_REDACTED]`), phone numbers (`[PHONE_REDACTED]`), and credit cards (`[CREDIT_CARD_REDACTED]`) before context reaches the LLM or logs.
 * **Audit Middleware:** Attaches `X-Process-Time-Ms` response headers and produces structured HTTP access logs.
@@ -210,7 +210,7 @@ uv run python -m scripts.benchmark_rag
 uv run python -m scripts.test_guardrails
 ```
 
-## 📊 Benchmark Results (MLflow Tracked)
+## Benchmark Results (MLflow Tracked)
 
 | Metric | Dense Baseline | CASO-RAG (Hybrid + Graph + Rerank) |
 |---|---|---|
@@ -222,7 +222,7 @@ uv run python -m scripts.test_guardrails
 
 *All experiments automatically tracked in MLflow at `http://localhost:5001`.*
 
-## 📡 API Endpoints
+## API Endpoints
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -234,7 +234,7 @@ uv run python -m scripts.test_guardrails
 
 ---
 
-## 🌐 Platform Services Directory
+## Platform Services Directory
 
 | Service | Port / URL | Description | Default Credentials (if applicable) |
 |---|---|---|---|
